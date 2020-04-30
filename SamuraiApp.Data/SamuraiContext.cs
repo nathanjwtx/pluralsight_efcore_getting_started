@@ -10,10 +10,16 @@ namespace SamuraiApp.Data
 {
     public class SamuraiContext : DbContext
     {
+        private readonly IConfiguration _config;
         public DbSet<Samurai> Samurais { get; set; }
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Clan> Clans { get; set; }
         public DbSet<Battle> Battles { get; set; }
+
+        public SamuraiContext(IConfiguration config)
+        {
+            _config = config;
+        }
 
         public static readonly ILoggerFactory ConsoleLoggerFactory = LoggerFactory.Create(builder =>
         {
@@ -26,12 +32,14 @@ namespace SamuraiApp.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var secretConfig = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables()
-                .AddUserSecrets("1bc59482-6468-416d-b761-728f6f18b453")
-                .Build();
+            // var secretConfig = new ConfigurationBuilder()
+            //     .SetBasePath(Directory.GetCurrentDirectory())
+            //     // .SetBasePath(Directory.GetCurrentDirectory())
+            //     .AddJsonFile("appsettings.json")
+            //     .AddEnvironmentVariables()
+            //     .AddUserSecrets("1bc59482-6468-416d-b761-728f6f18b453")
+            //     .Build();
+            var secretConfig = _config;
             
             var builder = new NpgsqlConnectionStringBuilder();
             builder.Port = Int32.Parse(secretConfig.GetConnectionString("pgPort"));

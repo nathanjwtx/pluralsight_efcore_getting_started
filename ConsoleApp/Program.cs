@@ -1,6 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Npgsql;
 using SamuraiApp.Data;
 using SamuraiApp.Domain;
 
@@ -12,13 +17,35 @@ namespace ConsoleApp
 
         private static void Main(string[] args)
         {
+            var serviceProvider = new ServiceCollection();
+            var builder = new HostBuilder()
+                .ConfigureAppConfiguration(((context, configurationBuilder) =>
+                {
+                    configurationBuilder.AddJsonFile("appsettings.json");
+                }))
+                .ConfigureServices(((context, services) =>
+                {
+                    services.AddOptions();
+                    services.Configure<ConfigOptions>(context.Configuration.GetSection("ConnectionStrings"));
+                    services.AddSingleton<IClass1, Class1>();
+                }))
+                .Build();
+                        var secretConfig = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            // .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json")
+                            .AddEnvironmentVariables()
+                            .AddUserSecrets("1bc59482-6468-416d-b761-728f6f18b453")
+                            .Build();
+                        
             // AddSamurai();
             // GetSamurais("After Add:");
             // InsertMultipleSamurais();
-            GetSamuraisSimpler();
+            // GetSamuraisSimpler();
             // Console.WriteLine("Press any key...");
             // Console.ReadKey();
-            QueryFilters();
+            // QueryFilters();
+            RetrieveAndUpdateSamurai();
         }
 
         private static void InsertMultipleSamurais()
@@ -89,6 +116,13 @@ namespace ConsoleApp
             
             // must be ordered in order to use LastOrDefault
             var last = _context.Samurais.OrderBy(s => s.Id).LastOrDefault(s => s.Name == name);
+        }
+
+        private static void RetrieveAndUpdateSamurai()
+        {
+            var samurai = _context.Samurais.FirstOrDefault();
+            samurai.Name += "San";
+            _context.SaveChanges();
         }
     }
 }
