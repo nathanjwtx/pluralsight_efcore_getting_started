@@ -13,31 +13,44 @@ namespace ConsoleApp
 {
     internal class Program
     {
-        private static SamuraiContext _context = new SamuraiContext();
+        public static IConfiguration Configuration { get; set; }
+
+        // private static SamuraiContext _context = new SamuraiContext(Configuration);
+        public static SamuraiContext _context { get; set; }
 
         private static void Main(string[] args)
         {
-            var serviceProvider = new ServiceCollection();
-            var builder = new HostBuilder()
-                .ConfigureAppConfiguration(((context, configurationBuilder) =>
-                {
-                    configurationBuilder.AddJsonFile("appsettings.json");
-                }))
-                .ConfigureServices(((context, services) =>
-                {
-                    services.AddOptions();
-                    services.Configure<ConfigOptions>(context.Configuration.GetSection("ConnectionStrings"));
-                    services.AddSingleton<IClass1, Class1>();
-                }))
+// <<<<<<< Updated upstream
+//             var serviceProvider = new ServiceCollection();
+//             var builder = new HostBuilder()
+//                 .ConfigureAppConfiguration(((context, configurationBuilder) =>
+//                 {
+//                     configurationBuilder.AddJsonFile("appsettings.json");
+//                 }))
+//                 .ConfigureServices(((context, services) =>
+//                 {
+//                     services.AddOptions();
+//                     services.Configure<ConfigOptions>(context.Configuration.GetSection("ConnectionStrings"));
+//                     services.AddSingleton<IClass1, Class1>();
+//                 }))
+//                 .Build();
+//                         var secretConfig = new ConfigurationBuilder()
+//                             .SetBasePath(Directory.GetCurrentDirectory())
+//                             // .SetBasePath(Directory.GetCurrentDirectory())
+//                             .AddJsonFile("appsettings.json")
+//                             .AddEnvironmentVariables()
+//                             .AddUserSecrets("1bc59482-6468-416d-b761-728f6f18b453")
+//                             .Build();
+//                         
+// =======
+            var secretConfig = new ConfigurationBuilder()
+                // .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
+                .AddUserSecrets("1bc59482-6468-416d-b761-728f6f18b453")
                 .Build();
-                        var secretConfig = new ConfigurationBuilder()
-                            .SetBasePath(Directory.GetCurrentDirectory())
-                            // .SetBasePath(Directory.GetCurrentDirectory())
-                            .AddJsonFile("appsettings.json")
-                            .AddEnvironmentVariables()
-                            .AddUserSecrets("1bc59482-6468-416d-b761-728f6f18b453")
-                            .Build();
-                        
+            Configuration = secretConfig;
+            _context = new SamuraiContext(secretConfig);
             // AddSamurai();
             // GetSamurais("After Add:");
             // InsertMultipleSamurais();

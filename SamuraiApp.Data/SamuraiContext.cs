@@ -11,6 +11,7 @@ namespace SamuraiApp.Data
     public class SamuraiContext : DbContext
     {
         private readonly IConfiguration _config;
+        private readonly IConfiguration secretConfig;
         public DbSet<Samurai> Samurais { get; set; }
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Clan> Clans { get; set; }
@@ -19,6 +20,8 @@ namespace SamuraiApp.Data
         public SamuraiContext(IConfiguration config)
         {
             _config = config;
+            Console.WriteLine("called");
+            secretConfig = config;
         }
 
         public static readonly ILoggerFactory ConsoleLoggerFactory = LoggerFactory.Create(builder =>
@@ -42,7 +45,8 @@ namespace SamuraiApp.Data
             var secretConfig = _config;
             
             var builder = new NpgsqlConnectionStringBuilder();
-            builder.Port = Int32.Parse(secretConfig.GetConnectionString("pgPort"));
+            builder.Port = Int32.Parse(secretConfig.GetSection("ConnectionStrings")["pgPort"]);
+            ;
             builder.Database = secretConfig.GetConnectionString("pgDb");
             builder.Host = secretConfig.GetConnectionString("pgHost");
             builder.Username = secretConfig.GetConnectionString("pgUser");

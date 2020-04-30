@@ -6,6 +6,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <None Update="appsettings.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    </ItemGroup>
+    
+    <ItemGroup>
       <ProjectReference Include="..\SamuraiApp.Data\SamuraiApp.Data.csproj" />
       <ProjectReference Include="..\SamuraiApp.Domain\SamuraiApp.Domain.csproj" />
     </ItemGroup>
