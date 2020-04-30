@@ -11,7 +11,6 @@ namespace SamuraiApp.Data
     public class SamuraiContext : DbContext
     {
         private readonly IConfiguration _config;
-        private readonly IConfiguration secretConfig;
         public DbSet<Samurai> Samurais { get; set; }
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Clan> Clans { get; set; }
@@ -21,7 +20,6 @@ namespace SamuraiApp.Data
         {
             _config = config;
             Console.WriteLine("called");
-            secretConfig = config;
         }
 
         public static readonly ILoggerFactory ConsoleLoggerFactory = LoggerFactory.Create(builder =>
@@ -35,23 +33,14 @@ namespace SamuraiApp.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // var secretConfig = new ConfigurationBuilder()
-            //     .SetBasePath(Directory.GetCurrentDirectory())
-            //     // .SetBasePath(Directory.GetCurrentDirectory())
-            //     .AddJsonFile("appsettings.json")
-            //     .AddEnvironmentVariables()
-            //     .AddUserSecrets("1bc59482-6468-416d-b761-728f6f18b453")
-            //     .Build();
-            var secretConfig = _config;
-            
             var builder = new NpgsqlConnectionStringBuilder();
-            builder.Port = Int32.Parse(secretConfig.GetSection("ConnectionStrings")["pgPort"]);
+            builder.Port = Int32.Parse(_config.GetSection("ConnectionStrings")["pgPort"]);
             ;
-            builder.Database = secretConfig.GetConnectionString("pgDb");
-            builder.Host = secretConfig.GetConnectionString("pgHost");
-            builder.Username = secretConfig.GetConnectionString("pgUser");
+            builder.Database = _config.GetConnectionString("pgDb");
+            builder.Host = _config.GetConnectionString("pgHost");
+            builder.Username = _config.GetConnectionString("pgUser");
             // from user-secret
-            builder.Password = secretConfig.GetSection("Secrets")["Samurai"];
+            builder.Password = _config.GetSection("Secrets")["Samurai"];
             
             optionsBuilder
                 .UseLoggerFactory(ConsoleLoggerFactory)

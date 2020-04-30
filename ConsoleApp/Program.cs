@@ -13,14 +13,11 @@ namespace ConsoleApp
 {
     internal class Program
     {
-        public static IConfiguration Configuration { get; set; }
-
         // private static SamuraiContext _context = new SamuraiContext(Configuration);
-        public static SamuraiContext _context { get; set; }
+        private static SamuraiContext _context { get; set; }
 
         private static void Main(string[] args)
         {
-// <<<<<<< Updated upstream
 //             var serviceProvider = new ServiceCollection();
 //             var builder = new HostBuilder()
 //                 .ConfigureAppConfiguration(((context, configurationBuilder) =>
@@ -34,27 +31,18 @@ namespace ConsoleApp
 //                     services.AddSingleton<IClass1, Class1>();
 //                 }))
 //                 .Build();
-//                         var secretConfig = new ConfigurationBuilder()
-//                             .SetBasePath(Directory.GetCurrentDirectory())
-//                             // .SetBasePath(Directory.GetCurrentDirectory())
-//                             .AddJsonFile("appsettings.json")
-//                             .AddEnvironmentVariables()
-//                             .AddUserSecrets("1bc59482-6468-416d-b761-728f6f18b453")
-//                             .Build();
-//                         
-// =======
+
             var secretConfig = new ConfigurationBuilder()
                 // .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()
                 .AddUserSecrets("1bc59482-6468-416d-b761-728f6f18b453")
                 .Build();
-            Configuration = secretConfig;
             _context = new SamuraiContext(secretConfig);
             // AddSamurai();
             // GetSamurais("After Add:");
             // InsertMultipleSamurais();
-            // GetSamuraisSimpler();
+            GetSamuraisSimpler();
             // Console.WriteLine("Press any key...");
             // Console.ReadKey();
             // QueryFilters();
@@ -121,7 +109,7 @@ namespace ConsoleApp
         private static void QueryFilters()
         {
             var name = "Sampson";
-            var filter = "S%";
+            // var filter = "S%";
             // var samurais = _context.Samurais
             //     .Where(s => EF.Functions.Like(s.Name, filter)).ToList();
 
